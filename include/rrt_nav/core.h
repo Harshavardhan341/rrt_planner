@@ -4,7 +4,7 @@
 #include <utility>
 #include <iostream>
 #include <list>
-#define STEP_DISTANCE 4
+#define STEP_DISTANCE 5
 #include <math.h>
 
 using namespace std;
@@ -14,6 +14,8 @@ class RRT{
         ros::ServiceClient get_map_client;
         nav_msgs::OccupancyGrid map;
         geometry_msgs::Point start,goal;
+        
+    public:    
         struct Node{
             //store stl pair of x,y
             geometry_msgs::Point point;
@@ -22,6 +24,7 @@ class RRT{
            
         };
         list <Node> rrt_;
+        list <Node> path;
         public:
         RRT(ros::NodeHandle *);
         //~RRT();
@@ -30,10 +33,10 @@ class RRT{
         geometry_msgs::Point generate_random_pt();
         Node nearest(geometry_msgs::Point,list <Node> );//get nearest node
         //bool isValid(pair<int,int>);//check if node is valid
-        bool close2goal(geometry_msgs::Point);//check is point is close enough to goal
+        bool close2goal(Node &);//check is point is close enough to goal
         Node new_conf(Node nearest,geometry_msgs::Point);
-        list<Node> main_algo();//algorithm fn list<Node>
-        
+        void main_algo();//algorithm fn list<Node>
+        Node& get_path(Node&);
 
         
 };
