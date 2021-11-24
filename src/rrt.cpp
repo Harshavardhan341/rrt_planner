@@ -60,13 +60,13 @@ bool RRT::close2goal(geometry_msgs::Point p)
         return true;
     return false;
 }
-RRT::Node RRT::new_conf(Node nearest,geometry_msgs::Point p)
-{   cout<<"enters new_conf"<<endl;
+RRT::Node RRT::new_conf(Node *nearest,geometry_msgs::Point p)
+{   
     Node new_conf;
-    float theta = atan2((p.y-nearest.point.y),(p.x-nearest.point.x));
-    new_conf.point.x = nearest.point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
-    new_conf.point.y = nearest.point.y+STEP_DISTANCE*sin(theta);
-    *new_conf.parent = nearest;//set parent 
+    float theta = atan2((p.y-nearest->point.y),(p.x-nearest->point.x));
+    new_conf.point.x = nearest->point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
+    new_conf.point.y = nearest->point.y+STEP_DISTANCE*sin(theta);
+    new_conf.parent = nearest;//set parent 
     return new_conf;
 
 }
