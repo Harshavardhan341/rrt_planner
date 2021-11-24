@@ -1,5 +1,4 @@
 
-
 #include <rrt_nav/core.h>
 #define ITERATIONS 100
 
@@ -38,7 +37,7 @@ bool RRT::isValid(geometry_msgs::Point p)
 }
 
 RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> tree)
-{   cout<<"enters nearest"<<endl;
+{   
     double dist=INFINITY;
     Node nearest;
     list <Node>::iterator it;
@@ -52,8 +51,7 @@ RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> tree)
         else
             continue;
     }
-    cout<<"nearest x"<<nearest.point.x<<endl;
-    cout<<"nearest y"<<nearest.point.y<<endl;
+
     return nearest;
 }
 bool RRT::close2goal(geometry_msgs::Point p)
@@ -83,10 +81,10 @@ geometry_msgs::Point RRT::generate_random_pt()
 list<RRT::Node> RRT::main_algo()
 {   list<Node> tree;
     geometry_msgs::Point random;
-    Node start_node,nearest_node,new_node;
+    Node start_node;
     start_node.point=start;
     start_node.parent=NULL;
-    cout<<start_node.parent<<endl;
+    
     tree.push_back(start_node);//add start node to tree
 
 
@@ -94,17 +92,24 @@ list<RRT::Node> RRT::main_algo()
     for(int i=0;i<=ITERATIONS;i++)
     {   
         random = generate_random_pt();
-        cout<<"random.x "<<random.x<<endl;
-        cout<<"random.y "<<random.y<<endl;
-        
 
+        
+        this->map = get_map_data();
 
 
         if(isValid(random))
-        {   cout<<"Valid point selected"<<endl;
-            nearest_node = nearest(random,tree);
-            new_node = new_conf(nearest_node,random);
-            tree.push_back(new_node);
+        {   
+            Node nearest_node = nearest(random,tree);
+            Node* new_node = new Node;
+
+            float theta = atan2((random.y-nearest_node.point.y),(random.x-nearest_node.point.x));
+            new_node->point.x = nearest_node.point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
+            new_node->point.y = nearest_node.point.y+STEP_DISTANCE*sin(theta);
+            new_node->parent = &nearest_node;
+            
+            cout<<"Parent: "<<new_node->parent<<endl;
+            tree.push_back(*new_node);
+            
         }
         else
         continue;
