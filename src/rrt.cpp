@@ -1,7 +1,7 @@
 
 
 #include <rrt_nav/core.h>
-#define ITERATIONS 10000
+#define ITERATIONS 1000
 
 using namespace std;
 
@@ -61,15 +61,15 @@ bool RRT::close2goal(RRT::Node &n)
         return true;
     return false;
 }
-RRT::Node RRT::new_conf(Node &nearest,geometry_msgs::Point p)
+RRT::Node RRT::new_conf(Node *nearest,geometry_msgs::Point p)
 {   
     Node new_conf;
-    float theta = atan2((p.y-nearest.point.y),(p.x-nearest.point.x));
-    new_conf.point.x = nearest.point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
-    new_conf.point.y = nearest.point.y+STEP_DISTANCE*sin(theta);
+    float theta = atan2((p.y-nearest->point.y),(p.x-nearest->point.x));
+    new_conf.point.x = nearest->point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
+    new_conf.point.y = nearest->point.y+STEP_DISTANCE*sin(theta);
     
     
-    new_conf.parent = &nearest;//set parent 
+    new_conf.parent = nearest;//set parent 
     
     return new_conf;
 
@@ -93,23 +93,27 @@ void RRT::get_path(RRT::Node &n)
         n=*n.parent;
 
     }while(n.parent!=0);
-    
-    
+    list <Node>::iterator it;
+    for(it=this->path.begin();it!=this->path.end();++it)
+    {
+        cout<<"X: "<<it->point.x<<endl;
+        cout<<"Y: "<<it->point.y<<endl;
+    }   
 
 }
 void RRT::main_algo()
 {   list<Node> tree;
     geometry_msgs::Point random;
-    Node start_node;
-    start_node.point=start;
-    start_node.parent=NULL;
-    cout<<start_node.parent<<endl;
-    tree.push_back(start_node);//add start node to tree
+    Node *start_node = new Node;
+    start_node->point=start;
+    start_node->parent=NULL;
+    cout<<start_node<<endl;
+    tree.push_back(*start_node);//add start node to tree
     this->map = get_map_data();
 
     int i;
 
-    for(i=0;i<=20000;i++)
+    for(i=0;i<=ITERATIONS;i++)
     {   
         random = generate_random_pt();
 
@@ -120,16 +124,25 @@ void RRT::main_algo()
         if(isValid(random))
         {   
             //cout<<"Valid point selected"<<endl;
-            Node nearest_node = nearest(random,tree);
+            Node* nearest_node = new Node;
+            *nearest_node = nearest(random,tree);
+            
             Node* new_node = new Node;
             *new_node = new_conf(nearest_node,random);
+
+
+
+            cout<<"NEW NODE ADDRESS: "<<new_node<<endl;
+            cout<<"NEW NODE PARENT x: "<<new_node->parent->point.x<<endl;
+            cout<<"NEW NODE PARENT : "<<new_node->parent<<endl;
+
             
             tree.push_back(*new_node);
             if(close2goal(*new_node))
                 {   cout<<"Goal Reached";
                     cout<<"X "<<new_node->point.x;
                     cout<<"Y "<<new_node->point.y;
-                    //this->get_path(new_node);
+                    this->get_path(*new_node);
                     break;
                 }
         }
@@ -137,13 +150,14 @@ void RRT::main_algo()
         continue;
 
     }   
-    cout<<"i:"<<i<<endl;
+    
 }
 int main(int argc, char** argv)
 {
     ros::init(argc,argv,"rrt_star_node");
     ros::NodeHandle nh;
     RRT r(&nh);
+
     
     r.main_algo();
 

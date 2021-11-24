@@ -4,7 +4,7 @@
 #include <utility>
 #include <iostream>
 #include <list>
-#define STEP_DISTANCE 3
+#define STEP_DISTANCE 5
 #include <math.h>
 
 using namespace std;
@@ -34,7 +34,7 @@ class RRT{
         Node nearest(geometry_msgs::Point,list <Node> &);//get nearest node
         //bool isValid(pair<int,int>);//check if node is valid
         bool close2goal(Node &);//check is point is close enough to goal
-        Node new_conf(Node &,geometry_msgs::Point);
+        Node new_conf(Node *,geometry_msgs::Point);
         void main_algo();//algorithm fn list<Node>
         void get_path(Node &);
 
