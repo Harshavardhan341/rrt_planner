@@ -1,5 +1,4 @@
 
-
 #include <rrt_nav/core.h>
 #define ITERATIONS 1000
 
@@ -37,7 +36,11 @@ bool RRT::isValid(geometry_msgs::Point p)
 
 }
 
+<<<<<<< HEAD
 RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> &tree)
+=======
+RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> tree)
+>>>>>>> main
 {   
     double dist=INFINITY;
     Node nearest;
@@ -67,10 +70,14 @@ RRT::Node RRT::new_conf(Node *nearest,geometry_msgs::Point p)
     float theta = atan2((p.y-nearest->point.y),(p.x-nearest->point.x));
     new_conf.point.x = nearest->point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
     new_conf.point.y = nearest->point.y+STEP_DISTANCE*sin(theta);
+<<<<<<< HEAD
     
     
     new_conf.parent = nearest;//set parent 
     
+=======
+    new_conf.parent = nearest;//set parent 
+>>>>>>> main
     return new_conf;
 
 }
@@ -104,25 +111,39 @@ void RRT::get_path(RRT::Node &n)
 void RRT::main_algo()
 {   list<Node> tree;
     geometry_msgs::Point random;
+<<<<<<< HEAD
     Node *start_node = new Node;
     start_node->point=start;
     start_node->parent=NULL;
     cout<<start_node<<endl;
     tree.push_back(*start_node);//add start node to tree
     this->map = get_map_data();
+=======
+    Node start_node;
+    start_node.point=start;
+    start_node.parent=NULL;
+    
+    tree.push_back(start_node);//add start node to tree
+>>>>>>> main
 
     int i;
 
     for(i=0;i<=ITERATIONS;i++)
     {   
         random = generate_random_pt();
+<<<<<<< HEAD
 
         
+=======
+>>>>>>> main
 
+        
+        this->map = get_map_data();
 
 
         if(isValid(random))
         {   
+<<<<<<< HEAD
             //cout<<"Valid point selected"<<endl;
             Node* nearest_node = new Node;
             *nearest_node = nearest(random,tree);
@@ -145,6 +166,19 @@ void RRT::main_algo()
                     this->get_path(*new_node);
                     break;
                 }
+=======
+            Node nearest_node = nearest(random,tree);
+            Node* new_node = new Node;
+
+            float theta = atan2((random.y-nearest_node.point.y),(random.x-nearest_node.point.x));
+            new_node->point.x = nearest_node.point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
+            new_node->point.y = nearest_node.point.y+STEP_DISTANCE*sin(theta);
+            new_node->parent = &nearest_node;
+            
+            cout<<"Parent: "<<new_node->parent<<endl;
+            tree.push_back(*new_node);
+            
+>>>>>>> main
         }
         else
         continue;
