@@ -20,11 +20,11 @@ nav_msgs::OccupancyGrid RRT::get_map_data()
 }
 bool RRT::isValid(geometry_msgs::Point p)
 {
-    p.x+=10;
-    p.y+=10;
+    float x = p.x+10;
+    float y =p.y+10;
     
-    int nx = p.x/0.05;
-    int ny = p.y/0.05;
+    int nx = x/0.05;
+    int ny = y/0.05;
     //std::cout<<nx<<" "<<ny<<std::endl;
 
     int index = (ny)*384 + nx ;
@@ -37,7 +37,7 @@ bool RRT::isValid(geometry_msgs::Point p)
 
 }
 
-RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> tree)
+RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> &tree)
 {   
     double dist=INFINITY;
     Node nearest;
@@ -61,7 +61,7 @@ bool RRT::close2goal(RRT::Node &n)
         return true;
     return false;
 }
-RRT::Node RRT::new_conf(Node nearest,geometry_msgs::Point p)
+RRT::Node RRT::new_conf(Node &nearest,geometry_msgs::Point p)
 {   
     Node new_conf;
     float theta = atan2((p.y-nearest.point.y),(p.x-nearest.point.x));
@@ -70,6 +70,7 @@ RRT::Node RRT::new_conf(Node nearest,geometry_msgs::Point p)
     
     
     new_conf.parent = &nearest;//set parent 
+    
     return new_conf;
 
 }
@@ -81,34 +82,34 @@ geometry_msgs::Point RRT::generate_random_pt()
     return p;
 
 }
-RRT::Node& RRT::get_path(RRT::Node &n)
+void RRT::get_path(RRT::Node &n)
 { 
     
     
-    this->path.push_back(n);
-    cout<<"X "<<n.point.x<<endl;
-    cout<<"Y "<<n.point.y<<endl;
-    if(n.parent!=NULL)
+    
+    do
     {
-        cout<<"go to parent";
-        return get_path(*n.parent);
-    }
+        this->path.push_back(n);
+        n=*n.parent;
+
+    }while(n.parent!=0);
+    
     
 
 }
 void RRT::main_algo()
 {   list<Node> tree;
     geometry_msgs::Point random;
-    Node start_node,nearest_node,new_node;
+    Node start_node;
     start_node.point=start;
     start_node.parent=NULL;
     cout<<start_node.parent<<endl;
     tree.push_back(start_node);//add start node to tree
     this->map = get_map_data();
 
+    int i;
 
-
-    for(int i=0;i<=ITERATIONS;i++)
+    for(i=0;i<=20000;i++)
     {   
         random = generate_random_pt();
 
@@ -117,16 +118,18 @@ void RRT::main_algo()
 
 
         if(isValid(random))
-        {   //cout<<"Valid point selected"<<endl;
-            nearest_node = nearest(random,tree);
-            new_node = new_conf(nearest_node,random);
+        {   
+            //cout<<"Valid point selected"<<endl;
+            Node nearest_node = nearest(random,tree);
+            Node* new_node = new Node;
+            *new_node = new_conf(nearest_node,random);
             
-            tree.push_back(new_node);
-            if(close2goal(new_node))
+            tree.push_back(*new_node);
+            if(close2goal(*new_node))
                 {   cout<<"Goal Reached";
-                    cout<<"X "<<new_node.point.x;
-                    cout<<"Y "<<new_node.point.y;
-                    this->get_path(new_node);
+                    cout<<"X "<<new_node->point.x;
+                    cout<<"Y "<<new_node->point.y;
+                    //this->get_path(new_node);
                     break;
                 }
         }
@@ -134,6 +137,7 @@ void RRT::main_algo()
         continue;
 
     }   
+    cout<<"i:"<<i<<endl;
 }
 int main(int argc, char** argv)
 {
