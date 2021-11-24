@@ -30,9 +30,10 @@ class RRT{
         geometry_msgs::Point generate_random_pt();
         Node nearest(geometry_msgs::Point,list <Node> );//get nearest node
         //bool isValid(pair<int,int>);//check if node is valid
-        bool close2goal(geometry_msgs::Point);//check is point is close enough to goal
+        bool close2goal(Node &);//check is point is close enough to goal
         Node new_conf(Node *,geometry_msgs::Point);
-        list<Node> main_algo();//algorithm fn list<Node>
+        void main_algo();//algorithm fn list<Node>
+        void get_path(Node &);
         
 
         

@@ -66,10 +66,11 @@ RRT::Node RRT::new_conf(Node *nearest,geometry_msgs::Point p)
 {   
     Node new_conf;
     float theta = atan2((p.y-nearest->point.y),(p.x-nearest->point.x));
-    new_conf.point.x = nearest.point->x+STEP_DISTANCE*cos(theta);//set coordinates of new node
-    new_conf.point.y = nearest.point->y+STEP_DISTANCE*sin(theta);
+    new_conf.point.x = nearest->point.x+STEP_DISTANCE*cos(theta);//set coordinates of new node
+    new_conf.point.y = nearest->point.y+STEP_DISTANCE*sin(theta);
+    
+    
     new_conf.parent = nearest;//set parent 
-    return new_conf;
 
 }
 geometry_msgs::Point RRT::generate_random_pt()
