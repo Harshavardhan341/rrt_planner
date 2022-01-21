@@ -1,2 +1,9 @@
 <launch>
-<
+
+  <arg name="map_file" default="$(find rrt_nav)/house_map.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+    <node name="rrt_planner_node" pkg="rrt_nav" type="rrt_planner_node"/>
+</launch>
