@@ -4,7 +4,9 @@
 #include <utility>
 #include <iostream>
 #include <list>
-#define STEP_DISTANCE 5
+#include<visualization_msgs/Marker.h>
+#define STEP_DISTANCE 7
+#define RADIUS 3
 #include <math.h>
 
 using namespace std;
@@ -14,6 +16,7 @@ class RRT{
         ros::ServiceClient get_map_client;
         nav_msgs::OccupancyGrid map;
         geometry_msgs::Point start,goal;
+        ros::Publisher marker_pub;
         
     public:    
         struct Node{
@@ -33,17 +36,10 @@ class RRT{
         geometry_msgs::Point generate_random_pt();
         Node nearest(geometry_msgs::Point,list <Node> &);//get nearest node
         //bool isValid(pair<int,int>);//check if node is valid
-<<<<<<< HEAD
         bool close2goal(Node &);//check is point is close enough to goal
         Node new_conf(Node *,geometry_msgs::Point);
         void main_algo();//algorithm fn list<Node>
         void get_path(Node &);
-=======
-        bool close2goal(geometry_msgs::Point);//check is point is close enough to goal
-        Node new_conf(Node *,geometry_msgs::Point);
-        list<Node> main_algo();//algorithm fn list<Node>
-        
->>>>>>> main
 
         
 };
