@@ -1,0 +1,10 @@
+<launch>
+
+  <arg name="map_file" default="$(find rrt_nav)/map/house_map.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen"/>
+  <arg name="node_start_delay" default="2.0" />  
+  <node name="planner_node" pkg="rrt_nav" type="rrt_planner_node" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " output="screen" /> 
+
+</launch>
