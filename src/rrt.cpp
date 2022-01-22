@@ -32,6 +32,7 @@ bool RRT::isValid(geometry_msgs::Point p)
 
     //printf("%d",index);
 
+    
     if(this->map.data[index]==0)
         return true;
     return false;
@@ -58,7 +59,7 @@ RRT::Node RRT::nearest(geometry_msgs::Point p, list <Node> &tree)
 }
 bool RRT::close2goal(RRT::Node &n)
 {   
-    if(sqrt(pow(n.point.x-this->goal.x,2)+pow(n.point.y-this->goal.y,2))<2)
+    if(sqrt(pow(n.point.x-this->goal.x,2)+pow(n.point.y-this->goal.y,2))<0.5)
         return true;
     return false;
 }
@@ -113,7 +114,9 @@ void RRT::main_algo()
     start_node->parent=NULL;
 
     tree.push_back(*start_node);//add start node to tree
+   
     this->map = get_map_data();
+ 
 
     int i;
 
@@ -122,13 +125,13 @@ void RRT::main_algo()
         random = generate_random_pt();
 
         if(isValid(random))
-        {
+        {   
         
         //this->map = get_map_data();
 
 
            
-            //cout<<"Valid point selected"<<endl;
+
             Node* nearest_node = new Node;
 
             *nearest_node = nearest(random,tree);

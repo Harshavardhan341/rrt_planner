@@ -5,7 +5,7 @@
 #include <iostream>
 #include <list>
 #include<visualization_msgs/Marker.h>
-#define STEP_DISTANCE 7
+#define STEP_DISTANCE 4
 #define RADIUS 3
 #include <math.h>
 
